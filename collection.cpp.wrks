@@ -1,0 +1,178 @@
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+class Object {
+	int num = 1337;
+
+public:
+	Object(){
+		num = 1337;
+	}
+	Object(int x){
+		num = x;
+	}
+	void setNum(int n){
+		num = n;
+	}
+	int getNum(){
+		return num;
+	}
+};
+
+template <class T> 
+class Collection {
+	int numObj;
+	Object* objArray = new Object[numObj];
+public:
+	Collection(){
+		numObj = 1;
+		for(int i = 0; i <= numObj; i++){
+			objArray[i] = Object();
+		}
+	}
+
+	Collection(int x){
+		numObj = x;
+		for(int i = 0; i <= numObj; i++){
+			objArray[i] = Object();
+		}
+	}
+
+	int getSize(){
+		return numObj + 1;
+	}
+
+	
+
+	void insert(Object x){
+		// Copy existing collection into new collection with size +1.
+		// Add new object.
+		cout << "Adding object..." << endl;
+		int newNum = numObj + 1;
+		Object* copy = new Object[newNum];
+
+		for(int i = 0; i < numObj; i++){
+			copy[i] = objArray[i];
+		}
+
+		copy[newNum] = x;
+		makeEmpty();
+		numObj = newNum;
+		objArray = new Object[numObj];
+		
+		
+		for(int i = 0; i <= newNum; i++){
+			objArray[i] = copy[i];
+			
+		}
+
+		delete [] copy;
+
+		copy = NULL;
+
+		cout << "Value of inserted object " << objArray[numObj].getNum() << endl;
+	}
+
+	void remove(Object x){
+		cout << "Removing object..." << endl;
+		int newNum = numObj - 1;
+		Object* copy = new Object[newNum];
+		bool sw = 0;
+		for(int i = 0; i < numObj; i++){
+			if(objArray[i] == x){
+				sw = 1;
+				copy[i] = objArray[i + 1];
+			} else if(sw == 0){
+				copy[i] = objArray[i];
+
+			} else{
+				copy[i] = objArray[i + 1];
+			}
+		}
+
+		makeEmpty();
+
+
+	}
+	void removeRandom(){
+		// Randomly removes an object from the collection.
+		srand(time(NULL));
+		int rando = rand() % getSize() + 1;
+		Object randObj = objArray[rando];
+		remove(randObj);
+	}
+	bool notContained(Object x){
+		int tf = 0;
+		for(int i = 0; i < getSize(); i++){
+			if(objArray[i] == x){
+				tf = 1;
+			}
+		}
+
+		return tf;
+	}
+
+	bool isEmpty(){
+		int tf = 0;
+		if(!(numObj >= 0)){
+			tf = 1;
+		}
+
+		return tf;
+	}
+
+	void makeEmpty(){
+		// Removes all objects from the collection
+		cout << "Emptying Collection...";
+		delete [] objArray;
+		numObj = -1;
+		objArray = NULL;
+	}
+
+	void printObj(){
+		cout << "Printing Objects in Collection..." << endl;
+		if((numObj >= 0)){
+		for(int i = 0; i <= numObj; i++){
+			cout << "Object " << i << " value: " << objArray[i].getNum() << 
+				endl;
+		}
+		cout << "Collection size : " << getSize();}
+		cout << "\tIs Empty: " << isEmpty() << endl;
+	}
+
+	const Collection & operator=(const Collection & other){
+		if (&other != this){
+			// clear the current contents of this List
+			this -> ~List();
+			// and get a copy of other
+			this -> List(other.getSize());
+			for(int i = 0; i < other.getSize(); i++){
+				objArray[i] = other.objArray[i];
+			}
+	    }
+
+	return *this;
+	}
+};
+
+int main(){
+	Collection <int> c1(2);
+	Object ins(69);
+	
+	c1.printObj();
+	//cout << "Size " << c1.getSize() << endl;
+	//cout << "Empty? " << c1.isEmpty() << endl;
+	c1.insert(ins);
+	//cout << c1.objArray;
+	//cout << "Size " << c1.getSize() << endl;
+	c1.printObj();
+	c1.insert(ins);
+	c1.printObj();
+	c1.makeEmpty();
+
+	c1.printObj();
+
+	return 0;
+}
