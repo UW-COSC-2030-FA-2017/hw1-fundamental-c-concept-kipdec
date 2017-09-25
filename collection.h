@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-
+#include "griev.h"
 using namespace std;
 
 class Object {
@@ -68,36 +68,34 @@ public:
 		//copy = NULL;
 
 		cout << "Value of inserted object " << objArray[numObj -1].getNum() << endl;
+		printG();
 	}
 
 	void remove(Object x){
-		if(numObj < 0){
-			cout << "There are no more objects to remove..." << endl;
-		} else {
-		cout << "Removing object of value " << x.getNum() << "..." 
-			<< endl;
-		int newNum = numObj - 1;
-		Object* copy = new Object[newNum];
-		bool sw = 0;
-		for(int i = 0; i < numObj; i++){
-			if(objArray[i].getNum() == x.getNum() && sw != 1){
-				sw = 1;
-				copy[i] = objArray[i + 1];
-				cout << "Object successfully removed!" << endl;
-			} else if(sw == 0){
-				copy[i] = objArray[i];
+		cout << "Attempting to remove object with value " << x.getNum() << endl;
+		if(!isEmpty() && !notContained(x)){
+			cout << "Removing object of value " << x.getNum() << "..." 
+				<< endl;
+			int newNum = numObj - 1;
+			Object* copy = new Object[newNum];
+			bool sw = 0;
+			for(int i = 0; i < newNum; i++){
+				if(objArray[i].getNum() == x.getNum() && sw != 1){
+					sw = 1;
+					copy[i] = objArray[i + 1];
+					cout << "Object successfully removed!" << endl;
+				} else if(sw == 0){
+					copy[i] = objArray[i];
 
-			} else {
-				copy[i] = objArray[i + 1];
+				} else {
+					copy[i] = objArray[i + 1];
+				}
+				
 			}
-			if(sw != 1){
-				cout << "Unable to find an object of that value.";
-			}
-		}
-
-		makeEmpty();
-		numObj = newNum;
-		objArray = copy;
+			
+			makeEmpty();
+			numObj = newNum;
+			objArray = copy;
 	    }
 
 	}
@@ -105,11 +103,8 @@ public:
 
 	void removeRandom(){
 		// Randomly removes an object from the collection.
-		cout << numObj;
-		if(numObj <= 0){
-			cout << "There are no remaining objects to remove.";
-		} else {
-			cout << "Removing random object." << endl;
+		cout << "Removing random object." << endl;
+		if(!isEmpty()){
 			srand(time(NULL));
 			int rando = rand() % getSize();
 			Object randObj = objArray[rando];
@@ -121,15 +116,15 @@ public:
 
 
 	bool notContained(Object x){
-		int tf = 0;
+		int tf = 1;
 		for(int i = 0; i < getSize(); i++){
-			if(objArray[i].getNum() == x.getNum()){
-				tf = 1;
+			if(objArray[i].getNum() == x.getNum() && tf != 0){
+				tf = 0;
 				cout << "The object of value " << x.getNum() << " is contained "
 					<< "within the collection." << endl; 
 			}
 		}
-		if(tf != 1){
+		if(tf != 0){
 			cout << "The object of value " << x.getNum() << " is not contained "
 				<< "within the collection." << endl;
 		}
@@ -140,6 +135,7 @@ public:
 		int tf = 0;
 		if(!(numObj > 0)){
 			tf = 1;
+			cout << "The collection is empty." << endl;
 		}
 
 		return tf;
@@ -147,56 +143,25 @@ public:
 
 	void makeEmpty(){
 		// Removes all objects from the collection
-		cout << "Emptying Collection...\n";
-		delete [] objArray;
-		numObj = 0;
-		//objArray = NULL;
-		cout << "Collection emptied..." << endl; 
+		if(!isEmpty()){
+			cout << "Emptying Collection...\n";
+			delete [] objArray;
+			numObj = 0;
+			cout << "Collection emptied..." << endl; 
+	    }
 	}
 
 	void printObj(){
-		cout << endl << "Printing Objects in Collection..." << endl;
-		if((numObj >= 0)){
-		for(int i = 0; i < numObj; i++){
-			cout << "Object " << i << " value: " << objArray[i].getNum() << 
-				endl;
-		}
-		cout << "Collection size : " << getSize();}
-		cout << "\tIs Empty: " << isEmpty() << endl << endl;
+		if(!isEmpty()){
+			cout << endl << "Printing Objects in Collection..." << endl;
+			for(int i = 0; i < numObj; i++){
+				cout << "Object " << i << " value: " << objArray[i].getNum() << 
+					endl;
+			}
+			cout << "Collection size : " << getSize();
+			cout << "\tIs Empty: " << isEmpty() << endl << endl;
+	    }
 	}
 
 
 };
-
-int main(){
-	Collection <int> c1(2);
-	Object ins(69);
-	Object ink(392);
-	c1.printObj();
-	//cout << "Size " << c1.getSize() << endl;
-	//cout << "Empty? " << c1.isEmpty() << endl;
-	c1.insert(ins);
-	//cout << c1.objArray;
-	//cout << "Size " << c1.getSize() << endl;
-	c1.printObj();
-	c1.insert(ink);
-	c1.printObj();
-	c1.remove(ins);
-	c1.printObj();
-	c1.notContained(ink);
-	c1.remove(ins);
-	c1.removeRandom();
-	c1.printObj();
-	c1.removeRandom();
-	c1.printObj();
-	c1.notContained(ins);
-	c1.removeRandom();
-	c1.removeRandom();
-
-	c1.printObj();
-	c1.makeEmpty();
-
-	c1.printObj();
-
-	return 0;
-}
